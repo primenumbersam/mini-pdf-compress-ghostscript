@@ -1,15 +1,18 @@
 # Mini PDF Compressor
 
-외부 런타임(Python, Docker 등) 설치 없이 단일 실행 파일 더블클릭만으로 동작하는 로컬 웹 기반 Ghostscript PDF 압축 도구이다.
+![screenshot](screen-mini-pdf-compressor.jpg)
 
-## 1. 아키텍처 특징 (Key Architecture)
+외부 런타임(Python, Docker 등) 설치 없이 단일 실행 파일 더블클릭만으로 동작하는 로컬 웹 기반 Ghostscript PDF 압축 도구.
+
+## 1. 개발 특징
+
 - 자체 압축 해제형 단일 실행 바이너리 (Self-extracting Single Binary): Go의 `//go:embed` 기능을 활용하여 Ghostscript 엔진 및 단일 웹 UI(HTML/CSS/JS)를 단일 실행 파일에 패키징.
 - 빌드 분기 최적화: `//go:build linux`, `//go:build windows` 빌드 태그를 사용하여 타깃 OS에 필요한 바이너리만 선별 임베딩(Linux 6MB, Windows 30MB).
 - 무설치 라이프사이클: 실행 시 `os.TempDir()` 하위에 임시 폴더를 생성하여 엔진을 추출(Linux 0755 권한 부여)하고, `127.0.0.1:0` 동적 포트 바인딩 후 기본 브라우저를 자동 오픈.
 - 자원 자동 정리: 프로그램 종료 시그널(SIGINT, SIGTERM) 수신 또는 UI 종료 버튼 클릭 시 임시 디렉터리를 일괄 삭제(`defer os.RemoveAll`).
 - 극단 파일 안전 분기 (Fallback): 타임아웃(30초) 초과, 비정상 객체 오류, 또는 압축 후 용량 증가 시 원본 파일을 손상 없이 그대로 보존하여 제공.
 
-## 2. 디렉터리 구조 (Flat Layout)
+## 2. 디렉터리 구조
 
 ```
 mini-pdf-compress-ghostscript/
